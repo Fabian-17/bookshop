@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import { dirname } from 'path';
+
 
 export default function fileDirName(meta) {
   const __filename = fileURLToPath(meta.url);

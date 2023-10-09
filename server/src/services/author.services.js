@@ -1,6 +1,6 @@
 import { Author } from "../models/author.js";
 
-export const getAllAuthors = async () => {
+export const getAllAuthors = async (_req, res) => {
     try {
         const authors = await Author.find().populate({
             path: 'books',
@@ -16,7 +16,7 @@ export const getAllAuthors = async () => {
                 message: 'Authors not found',
             });
         }
-        return res.status(200).json(authors);
+        return authors;
         
     } catch (error) {
         console.log(error);
@@ -24,7 +24,7 @@ export const getAllAuthors = async () => {
     }
 };
 
-export const getAuthor = async (authorId) => {
+export const getAuthor = async (authorId, res) => {
     try {
         const author = await Author.findById(authorId).populate({
             path: 'books',
@@ -41,7 +41,7 @@ export const getAuthor = async (authorId) => {
             });
         }
 
-        return res.status(200).json(author);
+        return author;
 
     } catch (error) {
         console.log(error);
@@ -50,7 +50,7 @@ export const getAuthor = async (authorId) => {
 };
 
 
-export const createAuthor = async (author) => {
+export const createAuthor = async (author, res ) => {
     try {
 
         const existingAuthor = await Author.findOne({ name: author.name });
@@ -60,10 +60,7 @@ export const createAuthor = async (author) => {
 
         const newAuthor = await Author.create(author);
 
-        return res.status(200).json({
-            message: 'Author created',
-            newAuthor
-        });
+        return newAuthor;
 
     } catch (error) {
         console.log(error);
@@ -72,7 +69,7 @@ export const createAuthor = async (author) => {
 };
 
 
-export const updateAuthor = async (authorId, author) => {
+export const updateAuthor = async (authorId, author, res) => {
     try {
 
         const existingAuthor = await Author.findById(authorId);
@@ -87,17 +84,14 @@ export const updateAuthor = async (authorId, author) => {
             });
         }
 
-        return res.status(200).json({
-            message: 'Author updated',
-            updatedAuthor
-        });
+        return updatedAuthor;
     } catch (error) {
         console.log(error);
         throw new Error(error.message);
     }
 };
 
-export const deleteAuthor = async (authorId) => {
+export const deleteAuthor = async (authorId, res) => {
     try {
         const author = await Author.findById(authorId);
         if (!author) {
@@ -108,10 +102,7 @@ export const deleteAuthor = async (authorId) => {
 
         const deletedAuthor = await Author.findByIdAndDelete(authorId);
 
-        return res.status(200).json({
-            message: 'Author deleted',
-            deletedAuthor
-        });
+        return (deletedAuthor);
     } catch (error) {
         console.log(error);
         throw new Error(error.message);

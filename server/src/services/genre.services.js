@@ -4,11 +4,11 @@ export const getAllGenres = async () => {
     try {
         const genres = await Genre.find();
         if (genres.length === 0) {
-            return res.status(404).json({
+            return ({
                 message: 'Genres not found',
             });
         }
-        return res.status(200).json(genres);
+        return genres;
     } catch (error) {
         console.log(error);
         throw new Error(error.message);
@@ -19,11 +19,11 @@ export const getGenre = async (genreId) => {
     try {
         const genre = await Genre.findById(genreId);
         if (!genre) {
-            return res.status(404).json({
+            return ({
                 message: 'Genre not found',
             });
         }
-        return res.status(200).json(genre);
+        return genre;
     } catch (error) {
         console.log(error);
         throw new Error(error.message);
@@ -48,17 +48,17 @@ export const updateGenre = async (genreId, genre) => {
     try {
         const existingGenre = await Genre.findById(genreId);
         if (!existingGenre) {
-            return res.status(404).json({
+            return ({
                 message: 'Genre not found',
             });
         }
         const updatedGenre = await Genre.findByIdAndUpdate(genreId, genre);
         if (!updatedGenre) {
-            return res.status(404).json({
+            return ({
                 message: 'Genre not found',
             });
         }
-        return res.status(200).json({
+        return ({
             message: 'Genre updated',
             updatedGenre,
         });
@@ -72,7 +72,7 @@ export const deleteGenre = async (genreId) => {
     try {
         const genre = await Genre.findById(genreId);
         if (!genre) {
-            return res.status(404).json({
+            return ({
                 message: 'Genre not found',
             });
         }

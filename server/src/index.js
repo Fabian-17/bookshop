@@ -5,7 +5,7 @@ import path from "path";
 import { environment } from './config/environments.js';
 import { connectDB } from './config/connection.js';
 
-import fileDirName from "./utils/fileDirName.js";
+import fileDirName from "./utils/fileName.js";
 const { __dirname } = fileDirName(import.meta);
 
 import AuthorRouter from './routes/author.routes.js';

@@ -1,6 +1,6 @@
 import { Book } from "../models/book.js";
 
-export const getAllBooks = async () => {
+export const getAllBooks = async (_req, res) => {
     try {
         const books = await Book.find().populate({
             path: 'author',
@@ -12,7 +12,7 @@ export const getAllBooks = async () => {
         });
 
         if(books.length === 0) {
-            return res.status(404).json({
+            return ({
                 message: 'Books not found',
             });
         }
@@ -35,7 +35,7 @@ export const getBook = async (bookId) => {
         });
 
         if(!book) {
-            return res.status(404).json({
+            return ({
                 message: 'Book not found',
             });
         }
@@ -66,7 +66,7 @@ export const updateBook = async (bookId, book) => {
 
         const existingBook = await Book.findById(bookId);
         if (!existingBook) {
-            return res.status(404).json({
+            return ({
                 message: 'Book not found',
             });
         }
@@ -83,7 +83,7 @@ export const deleteBook = async (bookId) => {
 
         const book = await Book.findById(bookId);
         if (!book) {
-            return res.status(404).json({
+            return ({
                 message: 'Book not found',
             });
         }
