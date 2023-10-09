@@ -5,9 +5,9 @@ export const BookSchema = new Schema({
         type: String,
         required: true
     },
-    gender: {
+    genre: {
         type: Schema.Types.ObjectId,
-        ref: 'Gender',
+        ref: 'Genre',
         required: true
     },
     year_publication: {
