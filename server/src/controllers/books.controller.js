@@ -4,9 +4,8 @@ import {
     createBook,
     deleteBook,
     updateBook } from '../services/books.services.js';
+import path from 'path';
 
-import fileDirName from '../utils/fileName.js';
-const { __dirname } = fileDirName(import.meta);
 
 export const getBooks = async (_req, res) => {
     try {
@@ -30,83 +29,49 @@ export const getBookById = async (req, res) => {
 };
 
 export const createdBook = async (req, res) => {
-    const { image } = req.files; 
-  
-    if (!image) {
-      return res.status(400).json({ error: 'image is required' });
-    }
-  
-    const original_filename = image.name.split(".")[0];
-    const format = image.name.split(".")[1];
-    const file_name = uuidv4() + "." + format;
-  
-    try {
-      const book = await createBook(req.body, { image: { original_filename, format, file_name } });
-  
-      const { __dirname } = fileDirName(import.meta);
-      const uploadPath = join(__dirname, "../files/", file_name);
-  
-      image.mv(uploadPath, function (err) {
-        if (err) throw new Error(err);
-      });
-  
-      return res.status(201).json(book);
-    } catch (error) {
-      console.log(error);
-      throw new Error(error.message);
-    }
-  };
+  try {
+    const { title, genre, year_publication, author } = req.body;
+    const { front_page } = req.files;
+
+    const imageName = `book_${Date.now()}${path.extname(front_page.name)}`;
+    front_page.mv(`./src/files/${imageName}`);
+
+
+    const book = {
+      title,
+      genre,
+      year_publication,
+      front_page: imageName,
+      author,
+    };
+
+    const newBook = await createBook(book); 
+
+    res.json(newBook);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error creating book' });
+  }
+};
 
 
   export const updatedBook = async (req, res) => {
+    const { id } = req.params; 
+    const bookData = req.body; 
+  
     try {
-      const bookId = req.params.id;
-      const { image } = req.files; 
+      const updatedBook = await updateBook(id, bookData);
   
-      const existingBook = await Book.findById(bookId);
-  
-      if (!existingBook) {
-        return res.status(404).json({ error: 'book not found' });
-      }
-  
-      if (req.body.title) {
-        existingBook.title = req.body.title;
-      }
-      
-      if (req.body.author) {
-        existingBook.author = req.body.author;
-      }
-  
-      if (image) {
-        const original_filename = image.name.split(".")[0];
-        const format = image.name.split(".")[1];
-        const file_name = uuidv4() + "." + format;
-  
-        const { __dirname } = fileDirName(import.meta);
-        const uploadPath = join(__dirname, "../files/", file_name);
-  
-        image.mv(uploadPath, async function (err) {
-          if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Error uploading image' });
-          }
-  
-          existingBook.image.original_filename = original_filename;
-          existingBook.image.format = format;
-          existingBook.image.file_name = file_name;
-  
-          const updatedBook = await updateBook(bookId, existingBook);
-  
-          return res.status(200).json(updatedBook);
+      if (updatedBook.message === 'Book not found') {
+        return res.status(404).json({
+          message: 'Book not found',
         });
-      } else {
-        const updatedBook = await updateBook(bookId, req.body);
-  
-        return res.status(200).json(updatedBook);
       }
+  
+      return res.status(200).json(updatedBook);
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Internal server error' });
+      throw new Error('Internal server error');
     }
   };
   

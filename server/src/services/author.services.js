@@ -1,14 +1,11 @@
 import { Author } from "../models/author.js";
+import { Book } from '../models/book.js';
 
 export const getAllAuthors = async (_req, res) => {
     try {
         const authors = await Author.find().populate({
             path: 'books',
             select: 'title genre',
-        })
-        .populate({
-            path: 'genre',
-            select: 'name',
         });
 
         if (authors.length === 0) {
@@ -29,10 +26,6 @@ export const getAuthor = async (authorId, res) => {
         const author = await Author.findById(authorId).populate({
             path: 'books',
             select: 'title genre',
-        })
-        .populate({
-            path: 'genre',
-            select: 'name',
         });
 
         if (!author) {

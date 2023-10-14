@@ -63,21 +63,27 @@ export const createBook = async (book) => {
 
 export const updateBook = async (bookId, book) => {
     try {
-
         const existingBook = await Book.findById(bookId);
         if (!existingBook) {
-            return ({
-                message: 'Book not found',
-            });
+          return null; 
         }
-        const updatedBook = await Book.findByIdAndUpdate(bookId, book);
-        return updatedBook;
-    }catch (error) {
+    
+      
+        existingBook.title = book.title;
+        existingBook.genre = book.genre;
+        existingBook.year_publication = book.year_publication;
+        existingBook.front_page = book.front_page;
+        existingBook.author = book.author;
+    
+        
+        const updatedBook = await existingBook.save();
+    
+        return updatedBook; 
+      } catch (error) {
         console.log(error);
         throw new Error(error.message);
-    }
-};
-
+      }
+    };
 export const deleteBook = async (bookId) => {
     try {
 
